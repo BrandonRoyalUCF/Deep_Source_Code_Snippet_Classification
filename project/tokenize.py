@@ -737,18 +737,18 @@ dataset_base_path = '/home/brandon/NLP_Project/datasets'
 
 # token_count_dict = task_parse_dataset_get_counts(dataset_base_path)
 # print('Done with creating token count dict.')
-token_count_dict_path = os.getcwd() + '/all_token_count_dict.pkl'
-token_count_dict = load_object_pickle(token_count_dict_path)
+# token_count_dict_path = os.getcwd() + '/all_token_count_dict.pkl'
+# token_count_dict = load_object_pickle(token_count_dict_path)
 
 # token_id_dict = task_clean_token_dict_create_token_ids(token_count_dict, min_count=10)
 # print('Done with creating token id dict.')
-token_id_dict_path = os.getcwd() + '/token_id_dict.pkl'
-token_id_dict = load_object_pickle(token_id_dict_path)
+# token_id_dict_path = os.getcwd() + '/token_id_dict.pkl'
+# token_id_dict = load_object_pickle(token_id_dict_path)
 
 # token_vectors_dict = task_create_token_vectors_for_all_files(dataset_base_path, token_id_dict)
 # print('Done with creating the token vector dict.')
-token_vectors_dict_path = os.getcwd() + '/token_vectors_dict.pkl'
-token_vectors_dict = load_object_pickle(token_vectors_dict_path)
+# token_vectors_dict_path = os.getcwd() + '/token_vectors_dict.pkl'
+# token_vectors_dict = load_object_pickle(token_vectors_dict_path)
 
 print('Done with all tasks.')
 
