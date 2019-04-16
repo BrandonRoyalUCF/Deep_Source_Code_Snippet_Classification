@@ -131,10 +131,15 @@ def pad_and_truncate(dataset_path, set_length):
     # create feature vector list
     feature_vectors = []
 
-    # populate feature vector list, then change type to np array for broadcasting
+    # create feature vector label list
+    feature_vectors_labels = []
+
+    # populate feature vector/label lists, then change type to np array for broadcasting
     for sample in dataset.all_data_points:
         feature_vectors.append(sample.features)
+        feature_vectors_labels.append(sample.label)
     feature_vectors = np.array(feature_vectors)
+    feature_vectors_labels = np.array(feature_vectors_labels)
 
     # truncate / pad to pre-determined length (see feature_vector_length_hist.png)
     feature_vectors = pad_sequences(feature_vectors, maxlen=set_length, truncating='post')
@@ -147,6 +152,10 @@ def pad_and_truncate(dataset_path, set_length):
 
     # save to dictionary using pickle
     save_object_pickle(dataset, os.getcwd() + '/dataset_pad_and_trunc.pkl')
+
+    # save to npy file
+    np.save('train_data.npy', feature_vectors)
+    np.save('train_data_labels.npy', feature_vectors_labels)
 
     return
 
