@@ -119,6 +119,7 @@ def pad_and_truncate(dataset_path, set_length):
 
     Args:
         dataset_path: A file path to the dataset dictionary pkl file
+        set_length: The specified length to pad / truncate
 
     Returns:
         A two dimensional feature vector that has been padded / truncated to length set_length
