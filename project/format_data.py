@@ -2,10 +2,11 @@ import random
 import numpy as np
 from copy import deepcopy
 import os
+from keras.preprocessing.sequence import pad_sequences
 
 # our own files
-from tokenize import load_object_pickle
-from tokenize import save_object_pickle
+from tokenizer import load_object_pickle
+from tokenizer import save_object_pickle
 from dataset import Dataset
 from dataset import DataPoint
 
@@ -111,8 +112,33 @@ def create_dataset(data_dict):
     """
     return True
 
-def pad_and_truncate(dataset, set_length):
-    
+def pad_and_truncate(dataset_path, set_length):
+    """ Pads / Truncates feature vectors from the dataset dictionary to length set_length
+
+    Note: Uses 0.0 value for padding
+
+    Args:
+        dataset_path: A file path to the dataset dictionary pkl file
+
+    Returns:
+        A two dimensional feature vector that has been padded / truncated to length set_length
+    """
+
+    # load the dictionary from the pickle file
+    dataset = load_object_pickle(dataset_path)
+
+    # create feature vector list
+    feature_vectors = []
+
+    # populate feature vector list, then change type to np array for broadcasting
+    for sample in dataset.all_data_points:
+        feature_vectors.append(sample.features)
+    feature_vectors = np.array(feature_vectors)
+
+    # truncate to pre-determined length (see feature_vector_length_hist.png)
+    feature_vectors = pad_sequences(feature_vectors, maxlen=set_length, truncating='post')
+
+    return feature_vectors
 
 
 ##################################
@@ -148,9 +174,9 @@ def task_create_dataset_from_token_dictionary(token_vectors_dict_path):
     return dataset
 
 def task_pad_truncate_data_and_save_new_datset_object(dataset_path, set_length):
-
+    pass
     # load the dictionary from the pickle file
-    token_vectors_dict = load_object_pickle(token_vectors_dict_path)
+    #token_vectors_dict = load_object_pickle(dataset_path)
 
     # pad or truncate all feature vectors in the dataset to the given length
 
@@ -165,8 +191,6 @@ def task_pad_truncate_data_and_save_new_datset_object(dataset_path, set_length):
 # dataset = task_create_dataset_from_token_dictionary(token_vectors_dict_path)
 # save_object_pickle(dataset, os.getcwd() + '/dataset.pkl')
 
-dataset = load_object_pickle(os.getcwd() + '/dataset.pkl')
-for sample in dataset.all_data_points:
-    print(sample.label)
-    print(sample.features)
+if __name__ == '__main__':
+    pad_and_truncate(os.getcwd() + '/dataset.pkl', 200)
 
