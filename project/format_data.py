@@ -113,7 +113,7 @@ def create_dataset(data_dict):
     return True
 
 def pad_and_truncate(dataset_path, set_length):
-    """ Pads / Truncates feature vectors from the dataset dictionary to length set_length
+    """ Pads / Truncates feature vectors from the dataset dictionary to length set_length and saves as pkl dataset obj
 
     Note: Uses 0.0 value for padding
 
@@ -136,10 +136,19 @@ def pad_and_truncate(dataset_path, set_length):
         feature_vectors.append(sample.features)
     feature_vectors = np.array(feature_vectors)
 
-    # truncate to pre-determined length (see feature_vector_length_hist.png)
+    # truncate / pad to pre-determined length (see feature_vector_length_hist.png)
     feature_vectors = pad_sequences(feature_vectors, maxlen=set_length, truncating='post')
 
-    return feature_vectors
+    # store the truncated / padded feature vectors to the dictionary dataset
+    i = 0
+    for sample in dataset.all_data_points:
+        sample.features = feature_vectors[i]
+        i += 1
+
+    # save to dictionary using pickle
+    save_object_pickle(dataset, os.getcwd() + '/dataset_pad_and_trunc.pkl')
+
+    return
 
 
 ##################################
