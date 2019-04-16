@@ -184,7 +184,7 @@ def get_tokens_and_counts(dataset_path):
     #Key = the token as a string, val = the count the token was found in the dataset
     return tokens
 
-def save_obj_pickle(obj, output_path):
+def save_object_pickle(obj, output_path):
     """Saves an object as a pickle file to the specified path
     
     Args:
@@ -631,7 +631,7 @@ def task_parse_dataset_get_counts(dataset_basepath):
     token_count_dict_path = os.getcwd() + '/all_token_count_dict.pkl'
 
     # save the token_count_dict to a pickle file
-    save_obj_pickle(token_count_dict, token_count_dict_path)
+    save_object_pickle(token_count_dict, token_count_dict_path)
 
     # display some statistics about the token counts for the dataset
     analyze_token_counts(token_count_dict)
@@ -696,7 +696,7 @@ def task_clean_token_dict_create_token_ids(all_token_dict, min_count=-1, top_x_p
     token_id_dict_path = os.getcwd() + '/token_id_dict.pkl'
 
     # save the token_id_dict to a pickle file
-    save_obj_pickle(token_id_dict, token_id_dict_path)
+    save_object_pickle(token_id_dict, token_id_dict_path)
 
     # path for the python code generated for the token dict
     token_id_python_path = os.getcwd() + '/token_id_dict.py'
@@ -717,7 +717,7 @@ def task_create_token_vectors_for_all_files(dataset_basepath, token_id_dict):
     token_vectors_dict_path = os.getcwd() + '/token_vectors_dict.pkl'
 
     # save the token_vectors_dict to a pickle file
-    save_obj_pickle(token_vectors_dict, token_vectors_dict_path)
+    save_object_pickle(token_vectors_dict, token_vectors_dict_path)
 
     return token_vectors_dict
 
@@ -749,8 +749,6 @@ dataset_base_path = '/home/brandon/NLP_Project/datasets'
 # print('Done with creating the token vector dict.')
 # token_vectors_dict_path = os.getcwd() + '/token_vectors_dict.pkl'
 # token_vectors_dict = load_object_pickle(token_vectors_dict_path)
-
-print('Done with all tasks.')
 
 
 
