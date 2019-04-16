@@ -10,6 +10,7 @@ from keras.layers import Bidirectional
 from keras.layers import TimeDistributed
 from keras.layers import BatchNormalization
 from keras.layers import MaxPooling1D
+from keras.layers import Flatten
 
 # Keras Optimizers
 from keras.optimizers import Adam
@@ -21,7 +22,7 @@ def create_conv_bidirect_lstm_model(vocab_size, embedding_dimension, num_timeste
     model.add(Embedding(vocab_size, embedding_dimension, input_length=num_timesteps))
     model.add(Conv1D(num_conv_filters, 1, strides=1, activation='relu', padding='same'))
     model.add(MaxPooling1D(pool_size=2))
-    model.add(Bidirectional(LSTM(300, return_sequences=True)))
+    model.add(Bidirectional(LSTM(50, return_sequences=True)))
     model.add(TimeDistributed(Dense(num_classes, activation='softmax')))
     opt = Adam(lr=0.01, beta_1=0.9, beta_2=0.999, epsilon=None, decay=0.0001, amsgrad=False)
     model.compile(loss='categorical_crossentropy', optimizer=opt, metrics=['categorical_accuracy'], sample_weight_mode="temporal")
@@ -32,12 +33,12 @@ def create_conv_bidirect_lstm_model(vocab_size, embedding_dimension, num_timeste
 
     return model
 
-def create_simple_lstm_model(vocab_size, embedding_dimension, num_timesteps):
+def create_simple_lstm_model(vocab_size, embedding_dimension, num_timesteps, num_classes):
 
     model = Sequential()
     model.add(Embedding(vocab_size, embedding_dimension, input_length=num_timesteps))
-    model.add(LSTM(100, return_sequence=True))
-    model.add(TimeDistributed(Dense(num_classes, activation='softmax')))
+    model.add(LSTM(100))
+    model.add(Dense(num_classes, activation='softmax'))
     opt = Adam(lr=0.01, beta_1=0.9, beta_2=0.999, epsilon=None, decay=0.0001, amsgrad=False)
     model.compile(loss='categorical_crossentropy', optimizer=opt, metrics=['categorical_accuracy'], sample_weight_mode="temporal")
 

@@ -21,9 +21,21 @@ class Dataset(object):
         # vocab_size is the the highest token value (which is pad_token_number) + 1
         self.vocab_size = self.pad_token_number + 1
 
-class Experiment(object):
+class SingleExperiment(object):
 
-    def __init__(self):
+    def __init__(self, train_x, train_y, test_x, test_y):
 
-        self.ten_fold_divisions = []
+        self.train_x = train_x
+        self.train_y = train_y
+
+        self.test_x = test_x
+        self.test_y = test_y
+
+class AllExperiments(object):
+
+    def __init__(self, experiments, vocab_size, num_timesteps):
+
+        self.all_experiments = experiments
+        self.vocab_size = vocab_size
+        self.num_timesteps = num_timesteps
         
