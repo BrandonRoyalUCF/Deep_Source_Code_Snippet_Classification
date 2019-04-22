@@ -53,9 +53,8 @@ def convert_labels_to_multiclass(all_labels, num_classes, num_timesteps):
 
     return np.asarray(new_labels)
 
-# def test_model(model, test_x, test_y):
-
-
+def test_model(model, test_x, test_y):
+    print('hold')
 
 
 
@@ -85,12 +84,15 @@ def run_single_experiment(experiment, model, num_classes, num_timesteps, experim
     train_model(model, train_x, train_y, experiment_id, num_epochs=num_epochs, batchsize=batchsize,
                 validation_split=validation_split)
     
-    # test the model
 
-
+a
 ##################################
 # *********Main Block************
 ##################################
+
+########################################
+# Training Code to train for each fold
+########################################
 
 # load the AllExperiments Object
 all_experiments_path = os.getcwd() + '/All_Experiments_Object.pkl'
@@ -112,3 +114,8 @@ for experiment in all_experiments.all_experiments:
     #get_class_count(experiment.test_y)
     run_single_experiment(experiment, model, num_classes, num_timesteps, experiment_id)
     experiment_id +=1
+
+########################################
+# Testing Code to test for each fold
+########################################
+
