@@ -11,6 +11,10 @@ from keras.layers import TimeDistributed
 from keras.layers import BatchNormalization
 from keras.layers import MaxPooling1D
 from keras.layers import Flatten
+from keras.layers import Dropout
+
+# Keras Regularizers
+from keras.regularizers import l2
 
 # Keras Optimizers
 from keras.optimizers import Adam
@@ -22,7 +26,8 @@ def create_conv_bidirect_lstm_model(vocab_size, embedding_dimension, num_timeste
     model.add(Embedding(vocab_size, embedding_dimension, input_length=num_timesteps))
     model.add(Conv1D(num_conv_filters, 1, strides=1, activation='relu', padding='same'))
     model.add(MaxPooling1D(pool_size=2))
-    model.add(Bidirectional(LSTM(50, return_sequences=True)))
+    model.add(Bidirectional(LSTM(50, return_sequences=True, kernel_regularizer=l2(0.01))))
+    model.add(Dropout(0.2))
     model.add(TimeDistributed(Dense(num_classes, activation='softmax')))
     opt = Adam(lr=0.01, beta_1=0.9, beta_2=0.999, epsilon=None, decay=0.0001, amsgrad=False)
     model.compile(loss='categorical_crossentropy', optimizer=opt, metrics=['categorical_accuracy'], sample_weight_mode="temporal")
