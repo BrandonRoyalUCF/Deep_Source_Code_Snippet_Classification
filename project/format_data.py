@@ -4,10 +4,12 @@ from copy import deepcopy
 import os
 
 # our own files
-from tokenize import load_object_pickle
-from tokenize import save_object_pickle
+from tokenize_data import load_object_pickle
+from tokenize_data import save_object_pickle
 from dataset import Dataset
 from dataset import DataPoint
+from dataset import SingleExperiment
+from dataset import AllExperiments
 
 # Seed randoms here so we get the same results if repeated
 np.random.seed(7)
@@ -112,7 +114,35 @@ def create_dataset(data_dict):
     return True
 
 def pad_and_truncate(dataset, set_length):
-    
+    """Pad and truncate all feature vectors in the dataset to the given length.
+    """
+
+    pad_token_val = dataset.pad_token_number
+
+    for sample in dataset.all_data_points:
+
+        if(len(sample.features) > set_length):
+            sample.features = sample.features[:set_length]
+
+        while(len(sample.features) < set_length):
+            sample.features.append(pad_token_val)
+
+    return dataset
+            
+def analyze_token_vec_length(dataset):
+
+    import statistics
+    all_lengths = []
+
+    for sample in dataset.all_data_points:
+        all_lengths.append(len(sample.features))
+
+    all_lengths.sort()
+
+
+    print('Min Length = ' + str(all_lengths[0]))
+    print('Max Length = ' + str(all_lengths[len(all_lengths)-1]))
+    print('Mean Length = ' + str(statistics.mean(all_lengths)))
 
 
 ##################################
@@ -150,10 +180,70 @@ def task_create_dataset_from_token_dictionary(token_vectors_dict_path):
 def task_pad_truncate_data_and_save_new_datset_object(dataset_path, set_length):
 
     # load the dictionary from the pickle file
-    token_vectors_dict = load_object_pickle(token_vectors_dict_path)
+    dataset = load_object_pickle(dataset_path)
 
     # pad or truncate all feature vectors in the dataset to the given length
+    dataset = pad_and_truncate(dataset, set_length)
 
+    # save the new dataset
+    save_object_pickle(dataset, 'dataset_padded_and_truncated.pkl')
+
+def task_create_experiments_for_cross_validation(dataset_padded_and_truncated_path):
+   
+    # load the dictionary from the pickle file
+    dataset = load_object_pickle(dataset_padded_and_truncated_path)
+
+    num_timesteps = len(dataset.all_data_points[0].features)
+    vocab_size = dataset.vocab_size
+
+
+    # create ten splits from the data
+    # the result is a list of ten lists each containing DataPoint objects
+    ten_splits = ten_fold_split(dataset.all_data_points)
+
+    all_experiments = []
+
+    # have 10 total experiments: 9 folds are training, 1 fold is testing
+    for i in range(10):
+        test_fold = ten_splits[i]
+        test_x = []
+        test_y = []
+        for sample in test_fold:
+            test_x.append(sample.features)
+            test_y.append(sample.label)
+
+        np_test_x = np.asarray(test_x)
+        np_test_y = np.asarray(test_y)
+
+        train_x = []
+        train_y = []
+        for j in range(10):
+            if(j==i):
+                continue
+
+            train_fold = ten_splits[j]
+            for sample in train_fold:
+                train_x.append(sample.features)
+                train_y.append(sample.label)
+        
+        np_train_x = np.asarray(train_x)
+        np_train_y = np.asarray(train_y)
+
+        print(np_train_x.shape)
+        print(np_train_x[0].shape)
+
+
+        experiment = SingleExperiment(np_train_x, np_train_y, np_test_x, np_test_y)
+        all_experiments.append(experiment)
+
+    
+    # create AllExperiments object
+    experiment = AllExperiments(all_experiments, vocab_size, num_timesteps)
+
+    # save the experiment object into a pickle file
+    save_object_pickle(experiment, os.getcwd() + '/All_Experiments_Object.pkl')
+
+    return experiment
 
 
 ##################################
@@ -165,8 +255,16 @@ def task_pad_truncate_data_and_save_new_datset_object(dataset_path, set_length):
 # dataset = task_create_dataset_from_token_dictionary(token_vectors_dict_path)
 # save_object_pickle(dataset, os.getcwd() + '/dataset.pkl')
 
-dataset = load_object_pickle(os.getcwd() + '/dataset.pkl')
-for sample in dataset.all_data_points:
-    print(sample.label)
-    print(sample.features)
+# dataset = load_object_pickle(os.getcwd() + '/dataset.pkl')
+# analyze_token_vec_length(dataset)
+
+# dataset_path = os.getcwd() + '/dataset.pkl'
+# task_pad_truncate_data_and_save_new_datset_object(dataset_path, 100)
+
+dataset_padded_and_truncated_path = os.getcwd() + '/dataset_padded_and_truncated.pkl'
+task_create_experiments_for_cross_validation(dataset_padded_and_truncated_path)
+
+
+
+
 
